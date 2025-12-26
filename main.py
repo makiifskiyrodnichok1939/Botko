@@ -6,6 +6,22 @@ import os
 import json
 import random
 
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class RenderHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'Bot is running')
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(("0.0.0.0", port), RenderHandler)
+    server.serve_forever()
+
+threading.Thread(target=run_web, daemon=True).start()
+
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 
